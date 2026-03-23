@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — Scentinel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#000;--white:#fff;--gray:#888;
+  --font-sans:'Segoe UI',system-ui,sans-serif;
+  --font-serif:'Lora',serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --red:#dc2626;--green:#16a34a;
+}
+::selection{background:var(--black);color:var(--white);}
+html,body{height:100%;}
+body{font-family:var(--font-sans);}
+
+.page{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;width:100vw;}
+@media(max-width:768px){.page{grid-template-columns:1fr;} .poster{display:none;}}
+
+.poster{position:relative;overflow:hidden;background:#060606;}
+.poster__bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%, rgba(255,255,255,.06) 0%, transparent 55%),radial-gradient(ellipse at 70% 20%, rgba(255,255,255,.04) 0%, transparent 50%);animation:bgPulse 8s ease-in-out infinite alternate;}
+@keyframes bgPulse{from{opacity:.6}to{opacity:1}}
+.poster__overlay{position:absolute;inset:0;background:linear-gradient(170deg,rgba(0,0,0,.4) 0%,rgba(0,0,0,.02) 50%,rgba(0,0,0,.5) 100%);}
+.poster__top{position:absolute;top:40px;left:44px;z-index:2;}
+.poster__brand{font-family:var(--font-serif);font-weight:400;font-style:italic;font-size:clamp(52px,7vw,88px);color:var(--white);letter-spacing:-.01em;line-height:.92;}
+.poster__tagline{font-weight:200;font-size:clamp(10px,1vw,14px);letter-spacing:.32em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:14px;}
+.poster__bottom{position:absolute;bottom:40px;left:44px;right:44px;z-index:2;}
+.poster__quote{font-family:var(--font-serif);font-weight:400;font-style:italic;font-size:clamp(15px,2vw,24px);color:rgba(255,255,255,.75);line-height:1.45;max-width:360px;}
+.poster__bottom-line{width:32px;height:1px;background:rgba(255,255,255,.3);margin-bottom:14px;}
+.poster::before,.poster::after{content:'';position:absolute;border-radius:50%;pointer-events:none;z-index:1;background:radial-gradient(circle,rgba(255,255,255,.18) 0%,transparent 70%);}
+.poster::before{width:280px;height:280px;top:20%;left:10%;animation:orbFloat 9s ease-in-out infinite;}
+.poster::after{width:180px;height:180px;bottom:22%;right:14%;animation:orbFloat2 11s ease-in-out 2s infinite;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0);opacity:.18;}50%{transform:translate(8px,-14px);opacity:.28;}}
+@keyframes orbFloat2{0%,100%{transform:translate(0,0);opacity:.12;}50%{transform:translate(-10px,12px);opacity:.22;}}
+
+.form-panel{background:var(--white);display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,6vw,80px) clamp(36px,6vw,80px);position:relative;overflow-y:auto;}
+.form-logo{margin-bottom:40px;}
+.form-logo-text{font-family:var(--font-serif);font-style:italic;font-size:24px;color:var(--black);text-decoration:none;}
+.form-eyebrow{font-weight:200;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--gray);margin-bottom:10px;opacity:0;animation:fadeUp .5s var(--ease) .1s forwards;}
+.form-title{font-family:var(--font-serif);font-weight:400;font-style:italic;font-size:clamp(28px,3.2vw,44px);color:var(--black);margin-bottom:32px;line-height:1.1;opacity:0;animation:fadeUp .5s var(--ease) .18s forwards;}
+
+.msg{padding:12px 16px;margin-bottom:20px;font-weight:300;font-size:13px;letter-spacing:.02em;border-left:2px solid;opacity:0;animation:fadeUp .4s var(--ease) forwards;}
+.msg-error{border-color:var(--red);background:rgba(220,38,38,.04);color:var(--red);}
+.msg-success{border-color:var(--green);background:rgba(22,163,74,.04);color:#15803d;}
+
+.field{position:relative;margin-bottom:18px;opacity:0;animation:fadeUp .5s var(--ease) forwards;}
+.field:nth-of-type(1){animation-delay:.24s;}
+.field:nth-of-type(2){animation-delay:.30s;}
+.field:nth-of-type(3){animation-delay:.36s;}
+
+.field-input{width:100%;height:56px;border:1px solid rgba(0,0,0,.2);background:var(--white);font-family:var(--font-sans);font-size:14px;font-weight:400;color:var(--black);padding:20px 16px 7px;outline:none;-webkit-appearance:none;transition:border-color .2s;}
+.field-input::placeholder{color:transparent;}
+.field-input:focus{border-color:var(--black);}
+.field-input.err{border-color:var(--red);}
+.field-label{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-weight:300;font-size:13.5px;color:rgba(0,0,0,.45);pointer-events:none;transition:top .2s var(--ease),font-size .2s var(--ease),color .2s;}
+.field-input:focus~.field-label,.field-input:not(:placeholder-shown)~.field-label{top:10px;transform:none;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(0,0,0,.4);}
+.field-input:focus~.field-label{color:var(--black);}
+
+.actions{margin-top:8px;opacity:0;animation:fadeUp .5s var(--ease) .44s forwards;}
+.btn-submit{width:100%;height:52px;background:var(--black);color:var(--white);border:none;cursor:pointer;font-family:var(--font-sans);font-weight:400;font-size:11px;letter-spacing:.26em;text-transform:uppercase;position:relative;overflow:hidden;transition:color .35s var(--ease);}
+.btn-submit::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.1);transform:translateX(-101%);transition:transform .38s var(--ease);}
+.btn-submit:hover::before{transform:translateX(0);}
+.btn-submit:disabled{opacity:.6;cursor:default;}
+
+.social-row{display:flex;gap:10px;margin-top:14px;}
+.social-btn{flex:1;height:42px;border:1px solid rgba(0,0,0,.18);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-sans);font-weight:300;font-size:12px;letter-spacing:.06em;color:var(--black);transition:background .2s,border-color .2s;}
+.social-btn:hover{background:#f5f5f5;border-color:rgba(0,0,0,.3);}
+
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;opacity:0;animation:fadeUp .5s var(--ease) .48s forwards;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.1);}
+.divider span{font-weight:200;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gray);}
+
+.form-footer{margin-top:20px;font-weight:300;font-size:12px;color:rgba(0,0,0,.5);letter-spacing:.02em;line-height:1.6;opacity:0;animation:fadeUp .5s var(--ease) .52s forwards;}
+.form-footer a{color:var(--black);font-weight:400;text-decoration:none;border-bottom:1px solid rgba(0,0,0,.25);transition:opacity .2s;}
+.form-footer a:hover{opacity:.5;}
+.form-footer .back-store{display:inline-block;margin-top:6px;border:none !important;color:rgba(0,0,0,.4) !important;font-size:11px;letter-spacing:.08em;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.toast-wrap{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:600;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none;}
+.toast{background:var(--black);color:var(--white);font-weight:300;font-size:13px;letter-spacing:.08em;padding:0 28px;display:flex;align-items:center;gap:14px;height:0;overflow:hidden;pointer-events:auto;position:relative;white-space:nowrap;clip-path:inset(0 100% 0 0);opacity:0;transition:clip-path .55s cubic-bezier(.22,1,.36,1),opacity .2s;}
+.toast.show{height:52px;clip-path:inset(0 0% 0 0);opacity:1;}
+.toast.hide{clip-path:inset(0 0 0 100%);opacity:0;height:0;transition:clip-path .4s,opacity .25s,height 0s .45s;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="poster">
+    <div class="poster__bg"></div>
+    <div class="poster__overlay"></div>
+    <div class="poster__top">
+      <div class="poster__brand">Scentinel</div>
+      <div class="poster__tagline">Est. 2026 &nbsp;·&nbsp; Timeless Allure</div>
+    </div>
+    <div class="poster__bottom">
+      <div class="poster__bottom-line"></div>
+      <p class="poster__quote">"The first impression is the scent you leave behind."</p>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-logo">
+      <a href="index.html" class="form-logo-text">Scentinel</a>
+    </div>
+
+    <p class="form-eyebrow">Join Scentinel</p>
+    <h1 class="form-title">Create Account</h1>
+
+    <div id="formMsg" style="display:none;"></div>
+
+    <div class="field">
+      <input class="field-input" type="text" id="regFullname" placeholder="Full Name" autocomplete="name">
+      <label class="field-label" for="regFullname">Full Name</label>
+    </div>
+
+    <div class="field">
+      <input class="field-input" type="email" id="regEmail" placeholder="Email" autocomplete="email">
+      <label class="field-label" for="regEmail">Email Address</label>
+    </div>
+
+    <div class="field">
+      <input class="field-input" type="password" id="regPassword" placeholder="Password" autocomplete="new-password">
+      <label class="field-label" for="regPassword">Password (min. 6 chars)</label>
+    </div>
+
+    <div class="actions">
+      <button class="btn-submit" id="registerBtn" onclick="handleRegister()">Create Account</button>
+
+      <div class="divider"><span>or continue with</span></div>
+
+      <div class="social-row">
+        <button class="social-btn" onclick="showToast('Google sign-in requires a server setup.')">
+          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.14 0 5.95 1.08 8.17 2.85l6.08-6.08C34.5 3.03 29.57 1 24 1 14.82 1 7.01 6.48 3.69 14.26l7.1 5.52C12.46 13.38 17.77 9.5 24 9.5z"/><path fill="#4285F4" d="M46.52 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.7c-.55 2.96-2.2 5.47-4.68 7.15l7.18 5.58C43.36 37.27 46.52 31.35 46.52 24.5z"/><path fill="#FBBC05" d="M10.79 28.22A14.54 14.54 0 0 1 9.5 24c0-1.47.25-2.89.69-4.22l-7.1-5.52A23.93 23.93 0 0 0 0 24c0 3.87.93 7.52 2.56 10.74l8.23-6.52z"/><path fill="#34A853" d="M24 47c5.57 0 10.24-1.84 13.65-5l-7.18-5.58C28.73 37.67 26.47 38.5 24 38.5c-6.23 0-11.54-3.88-13.21-9.28l-8.23 6.52C6.01 43.52 14.42 47 24 47z"/></svg>
+          Google
+        </button>
+        <button class="social-btn" onclick="showToast('Facebook sign-in requires a server setup.')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Facebook
+        </button>
+      </div>
+    </div>
+
+    <p class="form-footer">
+      Already have an account? <a href="login.html">Sign in here</a><br>
+      <a href="index.html" class="back-store">← Back to store</a>
+    </p>
+  </div>
+
+</div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+function showToast(msg) {
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = '<span style="opacity:.35">—</span><span>' + msg + '</span>';
+  wrap.appendChild(t);
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+  setTimeout(() => { t.classList.add('hide'); t.classList.remove('show'); setTimeout(() => t.remove(), 500); }, 2800);
+}
+
+function showMsg(msg, type) {
+  const el = document.getElementById('formMsg');
+  el.className = 'msg ' + (type === 'error' ? 'msg-error' : 'msg-success');
+  el.textContent = msg;
+  el.style.display = 'block';
+  void el.offsetWidth; el.style.opacity = '1';
+}
+
+function handleRegister() {
+  const name  = document.getElementById('regFullname').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPassword').value;
+
+  ['regFullname','regEmail','regPassword'].forEach(id => document.getElementById(id).classList.remove('err'));
+
+  if (!name)  { document.getElementById('regFullname').classList.add('err');  showToast('Please enter your full name.'); return; }
+  if (!email) { document.getElementById('regEmail').classList.add('err');     showToast('Please enter your email.'); return; }
+  if (!pass)  { document.getElementById('regPassword').classList.add('err');  showToast('Please enter a password.'); return; }
+  if (pass.length < 6) { document.getElementById('regPassword').classList.add('err'); showToast('Password must be at least 6 characters.'); return; }
+
+  // Save to localStorage as a demo user
+  const users = JSON.parse(localStorage.getItem('scentinel_users') || '[]');
+  if (users.find(u => u.email === email)) {
+    document.getElementById('regEmail').classList.add('err');
+    showMsg('An account with that email already exists.', 'error');
+    return;
+  }
+  users.push({ name, email, password: pass });
+  localStorage.setItem('scentinel_users', JSON.stringify(users));
+
+  // Auto-login
+  sessionStorage.setItem('scentinel_user', JSON.stringify({ name, email }));
+
+  const btn = document.getElementById('registerBtn');
+  btn.textContent = 'Account created ✓'; btn.disabled = true;
+  showMsg('Account created — welcome to Scentinel!', 'success');
+  setTimeout(() => { window.location.href = 'index.html'; }, 1400);
+}
+
+['regFullname','regEmail','regPassword'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => el.classList.remove('err'));
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') handleRegister(); });
+});
+</script>
+</body>
+</html>
